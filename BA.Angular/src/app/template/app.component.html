@@ -1,0 +1,59 @@
+<div class="offset-md-1 col-md-10">
+    <div *ngIf="!authenticated" class="LoginInfo" id="SignIn">
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#Login">Login</button>
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#Register">Register</button>
+    </div>
+    <div *ngIf="authenticat" class="LoginInfo" id="SignOut">
+        <span id="Username">Username</span>
+        <button type="button" class="btn btn-info">Logout</button>
+    </div>
+    <div class="col-md-2 menu-left">
+        <div>Deposit</div>
+        <div>Withdraw</div>
+        <div>Transfer</div>
+        <div>Get transaction list</div>
+    </div>
+</div>
+
+
+
+<div id="Login" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+    </div>
+    <div class="modal-body">
+        <p><label for="login">Username:</label><input [(ngModel)]="UserIdentity.Username" type="text" id="login" name="login"/></p>
+        <p><label for="password">Password:</label><input [(ngModel)]="UserIdentity.Password" type="text" id="password" name="passwsord"/></p>
+        <button type="button" class="btn btn-primary" (click)="Login($event)">Login</button>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+    </div>
+      
+    </div>
+
+<div id="Register" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p><label for="login">Username:</label><input [(ngModel)]="UserIdentity.Username" type="text" id="login" name="login"/></p>
+            <p><label for="password">Password:</label><input [(ngModel)]="UserIdentity.Password" type="text" id="password" name="passwsord"/></p>
+            <button type="button" class="btn btn-primary" (click)="Register($event)">Regisrer</button>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+          
+        </div>
+    </div>

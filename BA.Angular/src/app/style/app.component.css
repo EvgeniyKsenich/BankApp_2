@@ -1,0 +1,13 @@
+.menu-left{
+    border:2px solid black;
+    border-radius: 5px;
+    border-collapse: collapse;
+}
+.menu-left > div{
+    text-align: left;
+    font-size:20px;
+    width: 100%;
+    border-bottom:1px solid black;
+    border-top:1px solid black;
+    margin:0px;
+}
