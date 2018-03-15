@@ -7,10 +7,13 @@ using DA.Business.Repositories;
 
 namespace DA.Business.Servises
 {
-    public class TransactionServises: ITransactionServisesRepositoryes
+    public class TransactionServises : ITransactionServisesRepositoryes
     {
         private IMapper _Mapper;
         private IUnitOfWork _Unit;
+
+        private static readonly Object WithdrawLock = new Object();
+        private static readonly Object transferLock = new Object();
 
         public TransactionServises(IUnitOfWork Unit, IMapper mapper)
         {
@@ -21,7 +24,8 @@ namespace DA.Business.Servises
         public Transaction CreateTransaction(double amount, Account initiator, Account receiver, int type)
         {
             Transaction transaction = new Transaction();
-            try{
+            try
+            {
                 transaction = new BA.Database.Enteties.Transaction()
                 {
                     Summa = amount,
@@ -38,14 +42,17 @@ namespace DA.Business.Servises
             return transaction;
         }
 
-        public bool Deposit(string userName, double amount)
+        public bool Deposit(string userName, double amount, ref string error)
         {
             try
             {
                 var account = _Unit.Accounts.Get(userName);
 
-                if (amount < 0)
+                if (amount <= 0)
+                {
+                    error = "Amount less that 1";
                     return false;
+                }
 
                 account.Balance += amount;
 
@@ -57,58 +64,89 @@ namespace DA.Business.Servises
             }
             catch (Exception exception)
             {
+                error = "Thomething goes wrong! Internal server error.";
                 return false;
             }
         }
 
-        public bool Withdraw(string UserName, double amount)
+        public bool Withdraw(string UserName, double amount, ref string error)
         {
-            try
+            lock (WithdrawLock)
             {
-                var account = _Unit.Accounts.Get(UserName);
-                if (account.Balance < amount || amount < 0)
+                try
+                {
+                    var account = _Unit.Accounts.Get(UserName);
+                    if (account.Balance < amount)
+                    {
+                        error = "Not enoth money";
+                        return false;
+                    }
+                    if (amount <= 0)
+                    {
+                        error = "Amount less that 1";
+                        return false;
+                    }
+
+                    account.Balance -= amount;
+
+                    var transaction_ = CreateTransaction(amount, account, account, 2);
+                    _Unit.Transaction.Add(transaction_);
+
+                    _Unit.Save();
+                    return true;
+                }
+                catch (Exception exception)
+                {
+                    error = "Thomething goes wrong! Internal server error.";
                     return false;
-
-                account.Balance -= amount;
-
-                var transaction_ = CreateTransaction(amount, account, account, 2);
-                _Unit.Transaction.Add(transaction_);
-
-                _Unit.Save();
-                return true;
-            }
-            catch (Exception exception)
-            {
-                return false;
+                }
             }
         }
 
-        public bool Transfer(double amount, string userInitiatorName, string userReceiverName)
+        public bool Transfer(double amount, string userInitiatorName, string userReceiverName, ref string error)
         {
-            try
+            lock (transferLock)
             {
-                var userInitiator = _Unit.Accounts.Get(userInitiatorName);
-                if (userInitiator == null)
+                try
+                {
+                    var userInitiator = _Unit.Accounts.Get(userInitiatorName);
+                    if (userInitiator == null)
+                    {
+                        error = "Unknown initiator";
+                        return false;
+                    }
+                    if (userInitiator.Balance < amount)
+                    {
+                        error = "Not enoth money";
+                        return false;
+                    }
+                    if (amount <= 0)
+                    {
+                        error = "Amount less that 1";
+                        return false;
+                    }
+
+                    var userReceiver = _Unit.Accounts.Get(userReceiverName);
+                    if (userReceiver == null)
+                    {
+                        error = "Unknown reciver";
+                        return false;
+                    }
+
+                    var transaction = CreateTransaction(amount, userInitiator, userReceiver, 3);
+                    _Unit.Transaction.Add(transaction);
+
+                    userInitiator.Balance -= amount;
+                    userReceiver.Balance += amount;
+                    _Unit.Save();
+
+                    return true;
+                }
+                catch (Exception exception)
+                {
+                    error = "Thomething goes wrong! Internal server error.";
                     return false;
-                if (userInitiator.Balance < amount || amount < 0)
-                    return false;
-
-                var userReceiver = _Unit.Accounts.Get(userReceiverName);
-                if (userReceiver == null)
-                    return false;
-
-                var transaction = CreateTransaction(amount, userInitiator, userReceiver, 3);
-                _Unit.Transaction.Add(transaction);
-
-                userInitiator.Balance -= amount;
-                userReceiver.Balance += amount;
-                _Unit.Save();
-
-                return true;
-            }
-            catch (Exception exception)
-            {
-                return false;
+                }
             }
         }
     }

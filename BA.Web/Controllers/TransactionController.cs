@@ -10,33 +10,45 @@ namespace BA.Web.Controllers
     {
         private ITransactionServisesRepositoryes _transactionServises;
 
-        public TransactionController(ITransactionServisesRepositoryes TransactionServises)
+        public TransactionController(ITransactionServisesRepositoryes transactionServises)
         {
-            _transactionServises = TransactionServises;
+            _transactionServises = transactionServises;
         }
 
         [Authorize]
         [Route("Deposit")]
         public IActionResult Deposit(double amount)
         {
-            var result = _transactionServises.Deposit(User.Identity.Name, amount);
-            return Ok(result.ToString());
+            string error = string.Empty;
+            var result = _transactionServises.Deposit(User.Identity.Name, amount,ref error);
+            if (result)
+                return Ok(result.ToString());
+
+            return BadRequest(error);
         }
 
         [Authorize]
         [Route("Withdraw")]
         public IActionResult Withdraw(double amount)
         {
-            var result = _transactionServises.Withdraw(User.Identity.Name, amount);
-            return Ok(result.ToString());
+            string error = string.Empty;
+            var result = _transactionServises.Withdraw(User.Identity.Name, amount,ref error);
+            if(result)
+                return Ok(result.ToString());
+
+            return BadRequest(error);
         }
 
         [Authorize]
         [Route("Transfer")]
-        public IActionResult Transfer(double amount, string UserReceiverName)
+        public IActionResult Transfer(double amount, string userReceiverName)
         {
-            var result = _transactionServises.Transfer(amount, User.Identity.Name, UserReceiverName);
-            return Ok(result.ToString());
+            string error = string.Empty;
+            var result = _transactionServises.Transfer(amount, User.Identity.Name, userReceiverName,ref error);
+            if (result)
+                return Ok(result.ToString());
+
+            return BadRequest(error);
         }
     }
 }

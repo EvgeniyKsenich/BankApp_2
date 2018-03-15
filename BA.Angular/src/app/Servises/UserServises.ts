@@ -11,22 +11,24 @@ export class UserServises {
     constructor(private http: HttpClient) {   }
 
 
-    getCurrent(address:string) {
-        var result = this.http.get<User>(address + '/api/Users/GetCurrentUser' );
-        return result;
-    }
-
-    register(address:string, _item: User) {
+    getCurrentUser(address:string, key:string){
         return this.http
-            .post("/api/Users/register", _item, {
-                headers: this.httpOptions.headers
-            });
-    }
-
-    getOtherList(address:string){
-        return this.http
-        .post<Array<User>>("/api/Users/Get", {
-            headers: this.httpOptions.headers
+            .post(address + "/api/Users/GetCurrentUser", {},
+        {
+            headers:{
+                Authorization:"Bearer " + key
+            }
         });
     }
+
+    GetUsersFoTransaction(address:string, key:string){
+        return this.http
+            .get(address + "/api/Users",
+        {
+            headers:{
+                Authorization:"Bearer " + key
+            }
+        });
+    }
+
 }

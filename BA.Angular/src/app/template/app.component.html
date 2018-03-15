@@ -1,59 +1,165 @@
-<div class="offset-md-1 col-md-10">
-    <div *ngIf="!authenticated" class="LoginInfo" id="SignIn">
-        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#Login">Login</button>
-        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#Register">Register</button>
+<div class="offset-md-2 col-md-8">
+    <div>
+    <div *ngIf="UserInfo.Id == -1" class="LoginInfo" id="SignIn">
+        <button *ngIf="register"  (click)="LoginReisterToggle()" type="button" class="btn btn-info" id="LoginBtn">Login</button>
+        <button *ngIf="!register" (click)="LoginReisterToggle()" type="button" class="btn btn-info" id="RegisterBtn">Register</button>
     </div>
-    <div *ngIf="authenticat" class="LoginInfo" id="SignOut">
-        <span id="Username">Username</span>
-        <button type="button" class="btn btn-info">Logout</button>
+    <div *ngIf="UserInfo.Id != -1" class="LoginInfo" id="SignOut">
+        <span id="Username"> {{UserInfo.UserName}}</span>
+        <button (click)="Logout($event)" type="button" class="btn btn-info">Logout</button>
     </div>
-    <div class="col-md-2 menu-left">
-        <div>Deposit</div>
-        <div>Withdraw</div>
-        <div>Transfer</div>
-        <div>Get transaction list</div>
+</div>
+    <div class="contetnt">
+        <div *ngIf="UserInfo.Id != -1" class="row">
+            <div class="myNav col-md-2">
+                    <span id="Balance">Balance: {{UserInfo.Balance}}</span>
+                    <p><button type="button" (click)="ModalsModels.ModalDeposit = true" class="btn btn-info btn-nav" >Deposit</button></p>
+                    <p><button type="button" (click)="ModalsModels.ModalWithdraw = true" class="btn btn-info btn-nav" >Withdraw</button></p>
+                    <p><button type="button" (click)="ModalsModels.ModalTransfer = true" class="btn btn-info btn-nav" >Transfer</button></p>
+            </div>
+            <div class="custom-table col-md-10">
+                <!-- Transactions Frame -->
+                <div id="transactionFrame" class="frame">
+                    <span class="head">Transactions</span>
+                <hr/>
+                <li *ngFor="let item of TransactionList; let i = index">
+                        <div *ngIf="item.type == 1" class="transaction deposit">
+                            <div class="transaction-item">
+                                <span class="trType">Deposit</span>
+                                <p>Summa : {{item.summa}} | Date: {{ item.date | date:'dd/MM/yyyy hh:mm:ss a'  }}</p>
+                            </div>
+                        </div>
+                        <div *ngIf="item.type == 2" class="transaction withdraw">
+                        <div class="transaction-item">
+                            <span class="trType">Withdraw</span>
+                            <p>Summa : {{item.summa}} | Date: {{item.date | date:'dd/MM/yyyy hh:mm:ss a'  }}</p>
+                        </div>
+                        </div>
+                        <div *ngIf="item.type == 3" class="transaction transfer {{item.accountInfoInitiator==UserInfo.UserName?'withdraw':'deposit'}}">
+                        <div class="transaction-item">
+                            <span class="trType">Transfer</span>
+                            <p>Summa : {{item.summa}} | Date: {{item.date | date:'dd/MM/yyyy hh:mm:ss a'  }}</p>
+                            <p>From: {{item.accountInfoInitiator}}</p>
+                            <p>To: {{item.accountInfoRecipient}}</p>
+                        </div>
+                        </div>
+                    </li>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="UserInfo.Id == -1" >
+            <!-- Auth -->
+            <!-- Login -->
+            <div id="login" *ngIf="!register" class="form-group">
+                <div [hidden]="!ErrorModel.LoginError" class="alert alert-danger">
+                    Incorrect data
+                </div>
+                <p><label for="login">Username:</label><input #login="ngModel" required placeholder="Login" class="form-control" [(ngModel)]="UserIdentity.Username" type="text" id="login" name="login"/></p>
+                <p><label for="password">Password:</label><input #password="ngModel" required placeholder="Password" value="1111" class="form-control" [(ngModel)]="UserIdentity.Password" type="password" id="password" name="passwsord"/></p>
+                <button [disabled]="login.invalid || password.invalid" type="button" class="btn btn-primary" (click)="Login($event)">Login</button>
+                <button (click)="LoginReisterToggle()" type="button" class="btn btn-primary" id="RegisterBtn">Create account</button>
+            </div>
+            <!-- Register -->
+            <div *ngIf="register" id="register" class="form-group">
+                <div [hidden]="!ErrorModel.RegisterError" class="alert alert-danger">
+                    Incorrect data
+                </div>
+                <p><label for="loginRegister">Username:</label>
+                <input #username="ngModel" required class="form-control" [(ngModel)]="UserRegister.UserName" type="text" id="loginRegister" name="login"/></p>
+                <p><label for="passwordRegister">Password:</label>
+                <input #password="ngModel" required class="form-control" [(ngModel)]="UserRegister.Password" type="password" id="passwordRegister" name="passwsord"/></p>
+                <p><label for="nameRegister">Name:</label>
+                <input #name="ngModel" required class="form-control" [(ngModel)]="UserRegister.Name" type="text" id="nameRegister" name="name"/></p>
+                <p><label for="surnameRegister">Surname:</label>
+                <input #surname="ngModel" required class="form-control" [(ngModel)]="UserRegister.Surname" type="text" id="surnameRegister" name="surname"/></p>
+                <p><label for="emailRegister">Email:</label>
+                <input #email="ngModel" required pattern="[a-zA-Z_]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}" class="form-control" [(ngModel)]="UserRegister.Email" type="text" id="emailRegister" name="emai"/></p>
+                <p><label for="dateRegister">Date of Birdth:</label>
+                <input #date="ngModel" required class="form-control" [(ngModel)]="UserRegister.DateOfBirth" type="date" id="dateRegister" name="date"/></p>
+                
+                <button [disabled]="username.invalid || password.invalid || name.invalid || surname.invalid || email.invalid || date.invalid"
+                     type="button" class="btn btn-primary" (click)="Register($event)">Regisrer</button>
+                     <button (click)="LoginReisterToggle()" type="button" class="btn btn-primary" id="RegisterBtn">Login</button>
+            </div>
+
+        </div>
     </div>
 </div>
 
 
-
-<div id="Login" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-      
-    <!-- Modal content-->
-    <div class="modal-content">
+  
+  <!-- The Modal -->
+  <div *ngIf="ModalsModels.ModalDeposit" class="modalMy" >
+    <div class="dialogMy">
+      <div class="modal-content">
+        <!-- Modal Header -->
         <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-    </div>
-    <div class="modal-body">
-        <p><label for="login">Username:</label><input [(ngModel)]="UserIdentity.Username" type="text" id="login" name="login"/></p>
-        <p><label for="password">Password:</label><input [(ngModel)]="UserIdentity.Password" type="text" id="password" name="passwsord"/></p>
-        <button type="button" class="btn btn-primary" (click)="Login($event)">Login</button>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    </div>
-    </div>
-      
-    </div>
-
-<div id="Register" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-          
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Deposit</h4>
+          <button (click)="ModalsModels.ModalDeposit = false" type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
-        <div class="modal-body">
-            <p><label for="login">Username:</label><input [(ngModel)]="UserIdentity.Username" type="text" id="login" name="login"/></p>
-            <p><label for="password">Password:</label><input [(ngModel)]="UserIdentity.Password" type="text" id="password" name="passwsord"/></p>
-            <button type="button" class="btn btn-primary" (click)="Register($event)">Regisrer</button>
+        <!-- Modal body -->
+        <div class="modal-body form-group">
+            <p><label for="nameRegister">Amount:</label>
+            <input #amount="ngModel" pattern="[0-9]+" required class="form-control" [(ngModel)]="AmountPayment" type="number" id="depositAmount" name="amount"/></p>
+            <button [disabled]="amount.invalid" type="button" class="btn btn-primary" (click)="Deposit($event)">Deposit</button>
         </div>
+        <!-- Modal footer -->
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button (click)="ModalsModels.ModalDeposit = false" type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
         </div>
-        </div>
-          
-        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- The Modal -->
+  <div *ngIf="ModalsModels.ModalWithdraw" class="modalMy" >
+    <div class="dialogMy">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Withdraw</h4>
+          <button (click)="ModalsModels.ModalWithdraw = false" type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <!-- Modal body -->
+        <div class="modal-body">
+            <p><label for="nameRegister">Amount:</label>
+            <input #amount="ngModel" pattern="[0-9]+" required class="form-control" [(ngModel)]="AmountPayment" type="number" id="withdrawAmount" name="amount"/></p>
+            <button [disabled]="amount.invalid" type="button" class="btn btn-primary" (click)="Withdraw($event)">Withdraw</button>
+    </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button (click)="ModalsModels.ModalWithdraw = false" type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- The Modal -->
+    <div *ngIf="ModalsModels.ModalTransfer" class="modalMy" >
+        <div class="dialogMy">
+          <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Transfer</h4>
+              <button (click)="ModalsModels.ModalTransfer = false" type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <p><label for="transferAmount">Amount:</label>
+                <input pattern="[0-9]+" #amount="ngModel" required class="form-control" [(ngModel)]="AmountPayment" type="number" id="transferAmount" name="amount"/></p>
+                <p>
+                    <label for="TransferTo">To:</label>
+                    <select #transferTo="ngModel" required id="TransferTo" [(ngModel)]="selectedValueforTransfer">
+                        <option *ngFor="let c of UserTransferList" [ngValue]="c">{{c.userName}}</option>
+                    </select>
+                </p>
+                <button [disabled]="amount.invalid || transferTo.invalid" type="button" class="btn btn-primary" (click)="Transfer($event)">Transfer</button>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button (click)="ModalsModels.ModalTransfer = false" type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>

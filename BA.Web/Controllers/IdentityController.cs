@@ -25,21 +25,18 @@ namespace BA.Web.Controllers
         private IOptions<Identity> Identity_;
         private IPasswordEngine PasswordEngine_;
 
-        public IdentityController(IPasswordEngine PasswordEngine, IUnitOfWork Unit, IMapper mapper, IOptions<Identity> Identity)
+        public IdentityController(IPasswordEngine passwordEngine, IUnitOfWork unit, IMapper mapper, IOptions<Identity> identity)
         {
             _Mapper = mapper;
-            _Unit = Unit;
-            Identity_ = Identity;
-            PasswordEngine_ = PasswordEngine;
+            _Unit = unit;
+            Identity_ = identity;
+            PasswordEngine_ = passwordEngine;
         }
 
         [Route("Token")]
-        public async Task Token(UserAuth User_)
+        public async Task Token(UserAuth user_)
         {
-            var username = User_.Username;
-            var password = User_.Password;
-
-            var identity = GetIdentity(username, password);
+            var identity = GetIdentity(user_.Username, user_.Password);
             if (identity == null)
             {
                 Response.StatusCode = 400;

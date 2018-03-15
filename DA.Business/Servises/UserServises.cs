@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
-using BA.Database.UnitOfWork;
-using System.Collections.Generic;
-using BA.Database.Enteties;
-using DA.Business.Repositories;
-using DA.Business.Modeles;
-using BA.Business.ViewModel;
-using DA.Business.ViewModel;
-using BA.Business.Repositories;
-using Microsoft.Extensions.Options;
 using BA.Business.Modeles;
+using BA.Business.Repositories;
+using BA.Business.ViewModel;
+using BA.Database.Enteties;
+using BA.Database.UnitOfWork;
+using DA.Business.Modeles;
+using DA.Business.Repositories;
+using DA.Business.ViewModel;
+using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DA.Business.Servises
 {
@@ -30,11 +31,11 @@ namespace DA.Business.Servises
             _identity = Identity;
         }
 
-        public UserView GetUserViewModel(string UserName)
+        public UserView GetUserViewModel(string userName)
         {
             try
             {
-                var user = _UOF.Users.Get(UserName);
+                var user = _UOF.Users.Get(userName);
                 return _viewModelEngine.GetUserViewModel(user);
             }
             catch (Exception exception)
@@ -43,10 +44,10 @@ namespace DA.Business.Servises
             }
         }
 
-        public UserView GetUserViewModel(User User)
+        public UserView GetUserViewModel(User user)
         {
             try{
-                return _viewModelEngine.GetUserViewModel(User);
+                return _viewModelEngine.GetUserViewModel(user);
             }
             catch(Exception exception)
             {
@@ -72,7 +73,7 @@ namespace DA.Business.Servises
             }
         }
 
-        public IEnumerable<UserView> GetListForTransactions(string CurrentUserName)
+        public IEnumerable<UserView> GetListForTransactions(string currentUserName)
         {
             var userViewList = new List<UserView>();
             try
@@ -80,7 +81,7 @@ namespace DA.Business.Servises
                 var userList = _UOF.Users.GetList();
                 foreach (var user in userList)
                 {
-                    if (user.UserName != CurrentUserName)
+                    if (user.UserName != currentUserName)
                     {
                         var Model = GetUserViewModel(user);
                         Model.Balance = 0;
@@ -95,13 +96,13 @@ namespace DA.Business.Servises
             }
         }
 
-        public bool Register(UserModel User)
+        public bool Register(UserModel user)
         {
             try
             {
-                if (User != null)
+                if (user != null)
                 {
-                    var entetiUser = _mapper.Map<User>(User);
+                    var entetiUser = _mapper.Map<User>(user);
                     entetiUser.Password = _passwordEngine.GetHash(string.Concat(entetiUser.Password, _identity.Value.Salt));
                     entetiUser.Accounts.Add(new Account()
                     {
@@ -124,7 +125,7 @@ namespace DA.Business.Servises
         {         
             var list = new List<TransactionView>();
             try{
-                var transactions = _UOF.Transaction.GetList(Username);
+                List<Transaction>transactions = _UOF.Transaction.GetList(Username).ToList().OrderByDescending(c => c.Date).ToList();
                 foreach (var item in transactions)
                 {
                     list.Add(_viewModelEngine.GetTransactionViewModel(item));

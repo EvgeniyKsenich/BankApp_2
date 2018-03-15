@@ -1,8 +1,8 @@
 export class Transaction{
-    Id:number;
-    Date:string;
-    NaSummame:number;
-    Type:number;
-    AccountInfoInitiator:string;
-    AccountInfoRecipient:string;
+    id:number;
+    date:string;
+    summa:number;
+    type:number;
+    accountInfoInitiator:string;
+    accountInfoRecipient:string;
 }

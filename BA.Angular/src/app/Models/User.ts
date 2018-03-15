@@ -4,4 +4,10 @@ export class User{
     Name:string;
     Surname:string;
     Balance:number;
+
+    constructor(){
+        this.Id = -1;
+        this.Balance = 0;
+        this.UserName = "Username";
+    }
 }
