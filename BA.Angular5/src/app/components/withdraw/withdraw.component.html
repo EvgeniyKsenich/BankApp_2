@@ -1,0 +1,9 @@
+<h3>Withdraw</h3>
+<div *ngIf=(isError()) class="alert alert-danger error">
+    <span>{{errorMessage}}</span>
+</div>
+<p>
+    <label for="nameRegister">Amount:</label>
+    <input #amount="ngModel" pattern="[0-9]+" required class="form-control" [(ngModel)]="AmountPayment" type="number" id="withdrawAmount" name="amount" />
+</p>
+<button [disabled]="amount.invalid" type="button" class="btn btn-primary" (click)="Withdraw($event)">Withdraw</button>

@@ -24,29 +24,54 @@ namespace BA.Web.Controllers
         [Authorize]
         public IEnumerable<UserView> Get()
         {
-            var users = _userServises.GetListForTransactions(User.Identity.Name);
+            string errorMessage = string.Empty;
+            bool error = false;
+            var users = _userServises.GetListForTransactions(User.Identity.Name,ref error, ref errorMessage);
+            if (error)
+            {
+                Response.StatusCode = 400;
+            }
             return users;
         }
 
         [HttpPost]
         [Route("Register")]
-        public bool Post([FromBody]UserModel User_)
+        public IActionResult Post([FromBody]UserModel user_)
         {
-            return _userServises.Register(User_);
+            string error = string.Empty;
+            var result = _userServises.Register(user_, ref error);
+            if (result)
+                return Ok(result.ToString());
+
+            return BadRequest(error);
         }
 
         [Authorize]
         [Route("GetCurrentUser")]
         public UserView GetCurrentUser()
         {
-            return _userServises.GetUserViewModel(User.Identity.Name);
+            string errorMessage = string.Empty;
+            bool error = false;
+            var userView = _userServises.GetUserViewModel(User.Identity.Name, ref error, ref errorMessage);
+            if (error)
+            {
+                Response.StatusCode = 400;
+            }
+            return userView;
         }
 
         [Authorize]
         [Route("Transactions")]
         public IEnumerable<TransactionView> GetTransactionList()
         {
-            return _userServises.GetTransactionList(User.Identity.Name);
+            string errorMessage = string.Empty;
+            bool error = false;
+            var transactions =  _userServises.GetTransactionList(User.Identity.Name, ref error, ref errorMessage);
+            if (error)
+            {
+                Response.StatusCode = 400;
+            }
+            return transactions;
         }
 
     }

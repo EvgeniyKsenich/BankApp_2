@@ -1,3 +1,6 @@
-/BA.Angular/node_modules
+/*/node_modules
 /*/obj
 /*/bin
+/*/*.csproj.user
+.vs
+/.vs

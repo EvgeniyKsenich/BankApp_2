@@ -8,11 +8,11 @@ namespace DA.Business.Repositories
 {
     public interface IUserServises
     {
-        UserView GetUserViewModel(string UserName);
-        UserView GetUserViewModel(User User);
-        IEnumerable<UserView> GetList();
-        bool Register(UserModel model);
-        IEnumerable<TransactionView> GetTransactionList(string Username);
-        IEnumerable<UserView> GetListForTransactions(string CurrentUserName);
+        UserView GetUserViewModel(string UserName, ref bool error, ref string errorMessage);
+        UserView GetUserViewModel(User User, ref bool error, ref string errorMessage);
+        bool Register(UserModel model, ref string errorMessage);
+        IEnumerable<UserView> GetList(ref bool error, ref string errorMessage);
+        IEnumerable<TransactionView> GetTransactionList(string Usernam, ref bool error, ref string errorMessage);
+        IEnumerable<UserView> GetListForTransactions(string CurrentUserName, ref bool error, ref string errorMessage);
     }
 }

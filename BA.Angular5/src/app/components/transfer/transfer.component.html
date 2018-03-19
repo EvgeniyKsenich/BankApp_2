@@ -1,0 +1,14 @@
+<h3>Transfer</h3>
+<h3>Balance: <span *ngIf="isLoaded()">{{User.balance}}</span></h3>
+<div *ngIf=(isError()) class="alert alert-danger error">
+    <span>{{errorMessage}}</span>
+</div>
+<p><label for="transferAmount">Amount:</label>
+<input pattern="[0-9]+" #amount="ngModel" required class="form-control" [(ngModel)]="AmountPayment" type="number" id="transferAmount" name="amount" /></p>
+<p>
+    <label for="TransferTo">To:</label>
+    <select  #transferTo="ngModel" required id="TransferTo" [(ngModel)]="selectedValueforTransfer">
+        <option *ngFor="let c of UserTransferList" [ngValue]="c">{{c.userName}}</option>
+    </select>
+</p>
+<button [disabled]="amount.invalid || transferTo.invalid" type="button" class="btn btn-primary" (click)="Transfer($event)">Transfer</button>

@@ -1,0 +1,36 @@
+<h3>Register</h3>
+<div id="register" class="form-group">
+    <div [hidden]="true" class="alert alert-danger">
+        Incorrect data
+    </div>
+    <p>
+        <label for="loginRegister">Username:</label>
+        <input #username="ngModel" required class="form-control" [(ngModel)]="UserRegister.UserName" type="text" id="loginRegister" name="login" />
+    </p>
+    <p>
+        <label for="passwordRegister">Password:</label>
+        <input #password="ngModel" required class="form-control" [(ngModel)]="UserRegister.Password" type="password" id="passwordRegister" name="passwsord" />
+    </p>
+    <p>
+        <label for="nameRegister">Name:</label>
+        <input #name="ngModel" required class="form-control" [(ngModel)]="UserRegister.Name" type="text" id="nameRegister" name="name" />
+    </p>
+    <p>
+        <label for="surnameRegister">Surname:</label>
+        <input #surname="ngModel" required class="form-control" [(ngModel)]="UserRegister.Surname" type="text" id="surnameRegister" name="surname" />
+    </p>
+    <p>
+        <label for="emailRegister">Email:</label>
+        <input #email="ngModel" required pattern="[a-zA-Z_]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}" class="form-control" [(ngModel)]="UserRegister.Email" type="text" id="emailRegister" name="emai" />
+    </p>
+    <p>
+        <label for="dateRegister">Date of Birdth:</label>
+        <input #date="ngModel" required class="form-control" [(ngModel)]="UserRegister.DateOfBirth" type="date" id="dateRegister" name="date" />
+    </p>
+
+    <button [disabled]="username.invalid || password.invalid || name.invalid || surname.invalid || email.invalid || date.invalid"
+            type="button" class="btn btn-primary" (click)="Register($event)">
+        Regisrer
+    </button>
+    <a [routerLink]="['/login']" class="btn btn-primary" id="RegisterBtn">Login</a>
+</div>

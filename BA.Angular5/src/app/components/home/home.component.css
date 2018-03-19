@@ -1,0 +1,41 @@
+.transactions li{
+    list-style-type: none;
+    border-bottom: 1px solid rgb(222, 226, 230);;
+    width: 100%;
+}
+
+.transactions li p{
+    margin-bottom:0px;
+    padding-bottom:0px;
+}
+
+.transactions{
+    margin-top:2px !important;
+    border-radius:5px !important;
+    border-collapse: separate !important;
+    max-height:500px !important;
+    overflow-y: scroll;
+    display: block;
+}
+
+.transaction{
+    margin: 3px;
+}
+
+.transaction-item{
+    margin-left:5px;
+    padding-left:5px;
+}
+
+.deposit{
+    border-left:3px solid green;
+}
+
+.withdraw{
+    border-left:3px solid red;
+}
+
+.block-right{
+    float:right;
+    text-align: right;
+}

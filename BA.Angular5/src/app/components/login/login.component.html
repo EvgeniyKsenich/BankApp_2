@@ -1,0 +1,11 @@
+<h3>Login</h3>
+<p>
+    <label for="login">Username:</label>
+    <input #login="ngModel" required placeholder="Login" class="form-control" [(ngModel)]="UserIdenity.Username" type="text" id="login" name="login" />
+</p>
+<p>
+    <label for="password">Password:</label>
+    <input #password="ngModel" required placeholder="Password" class="form-control" [(ngModel)]="UserIdenity.Password" type="password" id="password" name="passwsord" />
+</p>
+<button [disabled]="login.invalid || password.invalid" type="button" class="btn btn-primary" (click)="Login($event)">Login</button>
+<a [routerLink]="['/register']" class="btn btn-primary" id="RegisterBtn">Create account</a>
