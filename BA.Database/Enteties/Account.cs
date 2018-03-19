@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-
 namespace BA.Database.Enteties
 {
     public class Account
@@ -16,6 +15,7 @@ namespace BA.Database.Enteties
         public int Id { get; set; }
 
         [Required]
+        [ConcurrencyCheck]
         public double Balance { get; set; }
 
         public int UserId { get; set; }

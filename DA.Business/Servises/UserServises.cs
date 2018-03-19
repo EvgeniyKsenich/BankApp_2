@@ -31,87 +31,94 @@ namespace DA.Business.Servises
             _identity = Identity;
         }
 
-        public UserView GetUserViewModel(string userName, ref bool error, ref string errorMessage)
+        public UserViewErrorModel GetUserViewModel(string userName)
         {
-            error = false;
+            var returnModel = new UserViewErrorModel();
             try
             {
                 var user = _UOF.Users.Get(userName);
                 if (user == null)
                 {
-                    errorMessage = "Can not find user";
-                    error = true;
-                    return null;
+                    returnModel.ErrorMessage = "Can not find user";
+                    returnModel.Error = true;
+                    return returnModel;
                 }
                 var userView = _ViewModelEngine.GetUserViewModel(user);
                 if (userView == null)
                 {
-                    errorMessage = "Can not create user view";
-                    error = true;
-                    return null;
+                    returnModel.ErrorMessage = "Can not create user view";
+                    returnModel.Error = true;
+                    return returnModel;
                 }
-                error = false;
-                return userView;
+                returnModel.Error = false;
+                returnModel.Item = userView;
+                return returnModel;
             }
             catch (Exception exception)
             {
-                error = true;
-                errorMessage = "Thomething goes wrong!";
-                return null;
+                returnModel.Error = true;
+                returnModel.ErrorMessage = "Thomething goes wrong!";
+                return returnModel;
             }
         }
 
-        public UserView GetUserViewModel(User user, ref bool error, ref string errorMessage)
+        public UserViewErrorModel GetUserViewModel(User user)
         {
-            error = false;
+            var returnModel = new UserViewErrorModel();
             try
             {
                 var userView = _ViewModelEngine.GetUserViewModel(user);
                 if (userView == null)
                 {
-                    errorMessage = "Can not create user view";
-                    error = true;
-                    return null;
+                    returnModel.ErrorMessage = "Can not create user view";
+                    returnModel.Error = true;
+                    return returnModel;
                 }
-                error = false;
-                return userView;
+                returnMdel.Error = false;
+                returnModel.Item = userView;
+                return returnModel;
             }
             catch(Exception exception)
             {
-                error = true;
-                errorMessage = "Thomething goes wrong!";
-                return null;
+                returnModel.ErrorMessage = "Thomething goes wrong!";
+                returnModel.Error = true; 
+                return returnModel;
             }
         }
 
-        public IEnumerable<UserView> GetList(ref bool error, ref string errorMessage)
+        public ListUserViewErrorModel GetList()
         {
-            error = false;
-            var userViewList = new List<UserView>();
+            var returnModel = new ListUserViewErrorModel();
             try
             {
+                var userViewList = new List<UserView>();
                 var userList = _UOF.Users.GetList();
                 foreach (var user in userList)
                 {
-                    userViewList.Add(GetUserViewModel(user, ref error, ref errorMessage));
-                    if (error)
+                    var model = GetUserViewModel(user);
+                    userViewList.Add(model.Item);
+                    if (model.Error)
                     {
-                        return new List<UserView>();
+                        returnModel.Error = true;
+                        returnModel.ErrorMessage = model.ErrorMessage;
+                        return returnModel;
                     }
                 }
-                return userViewList;
+                returnModel.Error = false;
+                returnModel.Items = userViewList;
+                return returnModel;
             }
             catch(Exception exception)
             {
-                error = true;
-                errorMessage = "Thomething goes wrong!";
-                return userViewList;
+                returnModel.ErrorMessage = "Thomething goes wrong!";
+                returnModel.Error = true;
+                return returnModel;
             }
         }
 
-        public IEnumerable<UserView> GetListForTransactions(string currentUserName, ref bool error, ref string errorMessage)
+        public ListUserViewErrorModel GetListForTransactions(string currentUserName)
         {
-            error = false;
+            var returnMdel = new ListUserViewErrorModel();
             var userViewList = new List<UserView>();
             try
             {
@@ -120,27 +127,32 @@ namespace DA.Business.Servises
                 {
                     if (user.UserName != currentUserName)
                     {
-                        var Model = GetUserViewModel(user, ref error, ref errorMessage);
-                        if (error)
+                        var Model = GetUserViewModel(user);
+                        if (Model.Error)
                         {
-                            return new List<UserView>();
+                            returnMdel.Error = true;
+                            returnMdel.ErrorMessage = Model.ErrorMessage;
+                            return returnMdel;
                         }
-                        Model.Balance = 0;
-                        userViewList.Add(Model);
+                        Model.Item.Balance = 0;
+                        userViewList.Add(Model.Item);
                     }
                 }
-                return userViewList;
+                returnMdel.Error = false;
+                returnMdel.Items = userViewList;
+                return returnMdel;
             }
             catch (Exception exception)
             {
-                error = true;
-                errorMessage = "Thomething goes wrong!";
-                return userViewList;
+                returnMdel.Error = true;
+                returnMdel.ErrorMessage = "Thomething goes wrong!";
+                return returnMdel;
             }
         }
 
-        public bool Register(UserModel user, ref string error)
+        public BooleanErrorModel Register(UserModel user)
         {
+            var returnodel = new BooleanErrorModel();
             try
             {
                 if (user != null)
@@ -154,42 +166,47 @@ namespace DA.Business.Servises
                     _UOF.Users.Add(entetiUser);
                     _UOF.Save();
 
-                    return true;
+                    returnodel.Error = false;
+                    return returnodel;
                 }
-                error = "Empty user data.";
-                return false;
+                returnodel.Error = true;
+                returnodel.ErrorMessage = "Empty user data.";
+                return returnodel;
             }
             catch (Exception exception)
             {
-                error = "Thomething goes wrong!";
-                return false;
+                returnodel.Error = true;
+                returnodel.ErrorMessage = "Thomething goes wrong!";
+                return returnodel;
             }
         }
 
-        public IEnumerable<TransactionView> GetTransactionList(string username, ref bool error, ref string errorMessage)
+        public LisTransactionsErrorModel GetTransactionList(string username)
         {
-            error = false;
-            var list = new List<TransactionView>();
+            var errorModel = new LisTransactionsErrorModel();
             try{
-                List<Transaction>transactions = _UOF.Transaction.GetList(username).ToList().OrderByDescending(c => c.Date).ToList();
+                var list = new List<TransactionView>();
+                IEnumerable<Transaction>transactions = _UOF.Transaction.GetList(username).ToList().OrderByDescending(c => c.Date).ToList();
                 foreach (var item in transactions)
                 {
                     var transactionViewModel = _ViewModelEngine.GetTransactionViewModel(item);
                     if(transactionViewModel == null)
                     {
-                        error = true;
-                        errorMessage = "Can not create transaction";
-                        return new List<TransactionView>();
+                        errorModel.Error = true;
+                        errorModel.ErrorMessage = "Can not create transaction";
+                        return errorModel;
                     }
                     list.Add(transactionViewModel);
                 }
-                return list;
+                errorModel.Items = list;
+                errorModel.Error = false;
+                return errorModel;
             }
             catch (Exception exception)
             {
-                error = true;
-                errorMessage = "Thomething goes wrong!";
-                return list;
+                errorModel.Error = true;
+                errorModel.ErrorMessage = "Thomething goes wrong!";
+                return errorModel;
             }
         }
 

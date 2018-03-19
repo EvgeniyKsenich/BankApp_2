@@ -33,5 +33,4 @@ export class AppComponent implements OnInit {
     this._dataServis.SetUserInfo(null);
     this._router.navigate(['login']);
   }
-  
 }

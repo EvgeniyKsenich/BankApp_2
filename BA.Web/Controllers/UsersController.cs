@@ -24,54 +24,47 @@ namespace BA.Web.Controllers
         [Authorize]
         public IEnumerable<UserView> Get()
         {
-            string errorMessage = string.Empty;
-            bool error = false;
-            var users = _userServises.GetListForTransactions(User.Identity.Name,ref error, ref errorMessage);
-            if (error)
+            var model = _userServises.GetListForTransactions(User.Identity.Name);
+            if (model.Error)
             {
                 Response.StatusCode = 400;
             }
-            return users;
+            return model.Items;
         }
 
         [HttpPost]
         [Route("Register")]
-        public IActionResult Post([FromBody]UserModel user_)
+        public IActionResult Post([FromBody]UserModel user)
         {
-            string error = string.Empty;
-            var result = _userServises.Register(user_, ref error);
-            if (result)
-                return Ok(result.ToString());
+            var model = _userServises.Register(user);
+            if (model.Error)
+                return Ok(model.Error);
 
-            return BadRequest(error);
+            return BadRequest(model.ErrorMessage);
         }
 
         [Authorize]
         [Route("GetCurrentUser")]
         public UserView GetCurrentUser()
         {
-            string errorMessage = string.Empty;
-            bool error = false;
-            var userView = _userServises.GetUserViewModel(User.Identity.Name, ref error, ref errorMessage);
-            if (error)
+            var model = _userServises.GetUserViewModel(User.Identity.Name);
+            if (model.Error)
             {
                 Response.StatusCode = 400;
             }
-            return userView;
+            return model.Item;
         }
 
         [Authorize]
         [Route("Transactions")]
         public IEnumerable<TransactionView> GetTransactionList()
         {
-            string errorMessage = string.Empty;
-            bool error = false;
-            var transactions =  _userServises.GetTransactionList(User.Identity.Name, ref error, ref errorMessage);
-            if (error)
+            var model =  _userServises.GetTransactionList(User.Identity.Name);
+            if (model.Error)
             {
                 Response.StatusCode = 400;
             }
-            return transactions;
+            return model.Items;
         }
 
     }

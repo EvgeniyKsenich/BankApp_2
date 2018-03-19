@@ -6,6 +6,7 @@ using DA.Business.Repositories;
 using System.Threading;
 using System.Collections.Generic;
 using DA.Business.Utiles;
+using DA.Business.Modeles;
 
 namespace DA.Business.Servises
 {
@@ -13,7 +14,6 @@ namespace DA.Business.Servises
     {
         private IMapper _Mapper;
         private IUnitOfWork _Unit;
-
 
         public TransactionServises(IUnitOfWork Unit, IMapper mapper)
         {
@@ -45,110 +45,130 @@ namespace DA.Business.Servises
             }
         }
 
-        public bool Deposit(string userName, double amount, ref string errorMessage)
+        public BooleanErrorModel Deposit(string userName, double amount)
         {
+            var returnModel = new BooleanErrorModel();
             try
             {
                 var account = _Unit.Accounts.Get(userName);
-
                 if (amount <= 0)
                 {
-                    errorMessage = "Amount less that 1";
-                    return false;
+                    returnModel.ErrorMessage = "Amount less that 1";
+                    returnModel.Error = true;
+                    return returnModel;
                 }
 
                 account.Balance += amount;
 
                 var error = false;
+                var errorMessage = string.Empty;
                 var transaction_ = CreateTransaction(amount, account, account, 1, ref error, ref errorMessage);
                 if (error)
                 {
-                    return false;
+                    returnModel.ErrorMessage = errorMessage;
+                    returnModel.Error = true;
+                    return returnModel;
                 }
 
                 _Unit.Transaction.Add(transaction_);
 
                 _Unit.Save();
-                return true;
+                return returnModel;
             }
             catch (Exception exception)
             {
-                errorMessage = "Thomething goes wrong!";
-                return false;
+                returnModel.ErrorMessage = "Thomething goes wrong!";
+                returnModel.Error = true;
+                return returnModel;
             }
 
         }
 
-        public bool Withdraw(string userName, double amount, ref string errorMessage)
+        public BooleanErrorModel Withdraw(string userName, double amount)
         {
+            var returnModel = new BooleanErrorModel();
             try
             {
                 var account = _Unit.Accounts.Get(userName);
                 if (account.Balance < amount)
                 {
-                    errorMessage = "Not enoth money";
-                    return false;
+                    returnModel.ErrorMessage = "Not enoth money";
+                    returnModel.Error = true;
+                    return returnModel;
                 }
                 if (amount <= 0)
                 {
-                    errorMessage = "Amount less that 1";
-                    return false;
+                    returnModel.ErrorMessage = "Amount less that 1";
+                    returnModel.Error = true;
+                    return returnModel;
                 }
 
                 account.Balance -= amount;
 
                 var error = false;
+                var errorMessage = string.Empty;
                 var transaction_ = CreateTransaction(amount, account, account, 2, ref error, ref errorMessage);
                 if (error)
                 {
-                    return false;
+                    returnModel.ErrorMessage = errorMessage;
+                    returnModel.Error = true;
+                    return returnModel;
                 }
 
                 _Unit.Transaction.Add(transaction_);
 
                 _Unit.Save();
-                return true;
+                return returnModel;
             }
             catch (Exception exception)
             {
-                errorMessage = "Thomething goes wrong!";
-                return false;
+                returnModel.ErrorMessage = "Thomething goes wrong!";
+                returnModel.Error = true;
+                return returnModel;
             }
         }
 
-        public bool Transfer(double amount, string userInitiatorName, string userReceiverName, ref string errorMessage)
+        public BooleanErrorModel Transfer(double amount, string userInitiatorName, string userReceiverName)
         {
+            var returnModel = new BooleanErrorModel();
             try
             {
                 var userInitiator = _Unit.Accounts.Get(userInitiatorName);
                 if (userInitiator == null)
                 {
-                    errorMessage = "Unknown initiator";
-                    return false;
+                    returnModel.ErrorMessage = "Unknown initiator"; ;
+                    returnModel.Error = true;
+                    return returnModel;
                 }
                 if (userInitiator.Balance < amount)
                 {
-                    errorMessage = "Not enoth money";
-                    return false;
+                    returnModel.ErrorMessage = "Not enoth money";
+                    returnModel.Error = true;
+                    return returnModel;
                 }
                 if (amount <= 0)
                 {
-                    errorMessage = "Amount less that 1";
-                    return false;
-                }
+                   returnModel.ErrorMessage = "Amount less that 1";
+                   returnModel.Error = true;
+                   return returnModel;
+                }  
 
                 var userReceiver = _Unit.Accounts.Get(userReceiverName);
                 if (userReceiver == null)
                 {
-                    errorMessage = "Unknown reciver";
-                    return false;
-                }
+                    returnModel.ErrorMessage = "Unknown reciver";
+                    returnModel.Error = true;
+                    return returnModel;
+                }   
 
                 var error = false;
+                var errorMessage = string.Empty;
                 var transaction = CreateTransaction(amount, userInitiator, userReceiver, 3, ref error, ref errorMessage);
                 if (error)
                 {
-                    return false;
+                    returnModel.ErrorMessage = errorMessage;
+                    returnModel.Error = true;
+                    return returnModel;
                 }
 
                 _Unit.Transaction.Add(transaction);
@@ -157,12 +177,13 @@ namespace DA.Business.Servises
                 userReceiver.Balance += amount;
                 _Unit.Save();
 
-                return true;
+                return returnModel;
             }
             catch (Exception exception)
             {
-                errorMessage = "Thomething goes wrong!";
-                return false;
+                returnModel.ErrorMessage = "Thomething goes wrong!";
+                returnModel.Error = true;
+                return returnModel;
             }
 
         }
