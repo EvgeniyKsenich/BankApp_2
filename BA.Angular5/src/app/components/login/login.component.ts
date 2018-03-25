@@ -14,7 +14,7 @@ import { UserInfo } from '../../models/models.user.info';
         UserServises
     ]
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent{
     private _userservis: UserServises;
     private _dataServis: DataServis;
     private _identitiServises: IdentitiServises;
@@ -22,6 +22,7 @@ export class LoginComponent implements OnInit{
 
     private ApiAddress: string;
     public UserIdenity: UserIdenity = new UserIdenity();
+    public ErrorMessage: string = "";
 
     constructor(dataServis: DataServis, identitiServises: IdentitiServises, router: Router,
                 userservis:UserServises) {
@@ -35,50 +36,28 @@ export class LoginComponent implements OnInit{
         this._router.navigate(['home']);
     }
 
-    ngOnInit() {
-        this.GetApiAddress();
-    }
-
-    async GetKey():Promise<string> {
-        var keyValue = "";
-        await this._dataServis.GetKeyValue().subscribe(key => {
-            keyValue = key;
-        });
-        return keyValue;
-    }
-
-    async GetApiAddress():Promise<string> {
-        var addressValue = "";
-        await this._dataServis.GetApiAddressValue().subscribe(address => {
-            addressValue =  address;
-        });
-        return addressValue;
-    }
-
     async Login() {
-        var address = await this.GetApiAddress();
-        this._identitiServises.Login(address, this.UserIdenity)
+        this._identitiServises.Login(this.UserIdenity)
             .subscribe(async (data: any) => {
                 if (data.access_token != null) {
-                    this._dataServis.SetKey(data.access_token);
-                    var user = await this.GetUserData();
+                    this._dataServis.SetToken(data.access_token);
+                    this.ErrorMessage = "";
                     this.ReddirectToHome();
                 }
                 else {
 
                 }
+            },
+            error => {
+                this.ErrorMessage = error.error;
             }
         );
     }
 
-    public async GetUserData():Promise<UserInfo>{
-        var address = await this.GetApiAddress();
-        var key = await this.GetKey();
-        var userInfo:UserInfo;
-        await this._userservis.getCurrentUser(address,key).subscribe( (user:any) => {
-            userInfo = user;
-            this._dataServis.SetUserInfo(user);
-        });
-        return userInfo;
+    public isError(){
+        if(this.ErrorMessage != "")
+            return true;
+
+        return false;
     }
 }

@@ -1,6 +1,10 @@
 <h3>Deposit</h3>
+<h3 *ngIf="isLoaded()">Balance: <span>{{User.balance}}</span></h3>
 <p>
     <label for="nameRegister">Amount:</label>
     <input #amount="ngModel" pattern="[0-9]+" required class="form-control" [(ngModel)]="AmountPayment" type="number" id="depositAmount" name="amount" />
 </p>
+<div [hidden]="!isError()" class="alert alert-danger">
+        {{ErrorMessage}}
+</div>
 <button [disabled]="amount.invalid" type="button" class="btn btn-primary" (click)="Deposit($event)">Deposit</button>

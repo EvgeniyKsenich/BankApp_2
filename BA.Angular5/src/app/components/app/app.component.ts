@@ -6,9 +6,7 @@ import { Router } from '@angular/router';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers:[
-    
-  ]
+  providers:[  ]
 })
 
 export class AppComponent implements OnInit {
@@ -28,9 +26,10 @@ export class AppComponent implements OnInit {
     return this._dataServis.isLiginIn();
   }
 
-  Logount(){
-    this._dataServis.SetKey('');
+  Logout(){
+    this._dataServis.SetToken('');
     this._dataServis.SetUserInfo(null);
     this._router.navigate(['login']);
   }
+  
 }

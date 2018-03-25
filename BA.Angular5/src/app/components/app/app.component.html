@@ -12,6 +12,9 @@
       <a class="nav-item nav-link" [routerLink]="['/withdraw']">Withdraw</a>
       <a class="nav-item nav-link disabled" [routerLink]="['/transfer']">Transfer</a>
     </div>
+    <div class="user-info" *ngIf="ifLoginIn()">
+        <a class="btn btn-danger" (click)="Logout()">Logout</a>
+    </div>
   </div>
 
 </nav>

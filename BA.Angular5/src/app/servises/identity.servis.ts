@@ -1,32 +1,39 @@
-import { Component, Injectable, Inject  } from '@angular/core';
+import { Component, Injectable, Inject, OnInit  } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserIdenity } from '../models/models.user.identity';
 import { UserRegister } from '../models/models.user.regiser';
+import { DataServis } from './data.servis';
 
 @Injectable()
-export class IdentitiServises {
-    
+export class IdentitiServises{
+    private static Address:string = "";
+
     httpOptions = {
         headers: new HttpHeaders({
             'Content-Type': 'application/json; charset=UTF-8',
             })
     };
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient,private _dataServise:DataServis) {
+        this._dataServise.GetApiAddressValue().subscribe(_address =>{
+            IdentitiServises.Address = _address;
+        });
+     }
 
-    Login(address: string, userIdentity: UserIdenity) {
+
+    Login(userIdentity: UserIdenity) {
         let userForm = new FormData();
         userForm.append('Username', userIdentity.Username);
         userForm.append('Password', userIdentity.Password);
         console.log(userForm);
 
         return this.http
-            .post(address + "/Identity/Token", userForm);
+            .post(IdentitiServises.Address + "/Identity/Token", userForm);
     }
 
-    Register(address:string, UserRegister:UserRegister){
+    Register(UserRegister:UserRegister){
         return this.http
-            .post(address + "/api/Users/Register", UserRegister,
+            .post(IdentitiServises.Address + "/api/Users/Register", UserRegister,
             { 
                 headers:this.httpOptions.headers
             }

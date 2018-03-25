@@ -16,7 +16,7 @@ export class RegisterComponent implements OnInit{
     private _router: Router;
     private _identitiServises: IdentitiServises;
     private _dataServis:DataServis;
-    private ApiAddress:string;
+    public ErrorMessage:string = "";
 
     constructor(identitiServises: IdentitiServises,
                 router: Router,
@@ -27,21 +27,24 @@ export class RegisterComponent implements OnInit{
     }
 
     ngOnInit(){
-        this.GetApiAddress();
     }
 
     Register(){
-        this._identitiServises.Register(this.ApiAddress, this.UserRegister).subscribe(
+        this._identitiServises.Register(this.UserRegister).subscribe(
             data => {
-                console.log(data);
+                this.ErrorMessage = "";
                 this._router.navigate(['login']);
+            },
+            error => {
+                this.ErrorMessage = error.error;
             }
         );
     }
 
-    GetApiAddress() {
-        this._dataServis.GetApiAddressValue().subscribe(address => {
-           this.ApiAddress =  address;
-       });
-   }
+   public isError(){
+    if(this.ErrorMessage != "")
+        return true;
+
+    return false;
+    }
 }

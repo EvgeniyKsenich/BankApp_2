@@ -1,54 +1,65 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders  } from '@angular/common/http';
 import { Transaction } from '../models/models.transaction';
+import { DataServis } from './data.servis';
 
 @Injectable()
 export class TransactionServis {
+    private static Address:string = "";
+    private static Token:string = "";
+
     httpOptions = {
         ContentType: 'application/json; charset=UTF-8'
     };
      
-    constructor(private http: HttpClient) {   }
+    constructor(private http: HttpClient,private _dataServise:DataServis) {
+        this._dataServise.GetApiAddressValue().subscribe(_address =>{
+            TransactionServis.Address = _address;
+        });
+        this._dataServise.GetTokenValue().subscribe(_token =>{
+            TransactionServis.Token = _token;
+        });
+    }
 
-    GetList(address:string, key:string){
+    GetList(){
         return this.http
-        .post<Array<Transaction>>(address + "/api/Users/Transactions", {}, {
+        .post<Array<Transaction>>(TransactionServis.Address + "/api/Users/Transactions", {}, {
             headers:{
-                Authorization:"Bearer " + key
+                Authorization:"Bearer " + TransactionServis.Token
             }
         });
     }
 
-    Deposit(address:string, key:string, amount:number){
+    Deposit(amount:number){
         let form = new FormData();
         form.append('amount', amount.toString());
         return this.http
-        .post(address + "/api/Transaction/Deposit", form , {
+        .post(TransactionServis.Address  + "/api/Transaction/Deposit", form , {
             headers:{
-                Authorization:"Bearer " + key
+                Authorization:"Bearer " + TransactionServis.Token 
             }
         });
     }
 
-    Withdraw(address:string, key:string, amount:number){
+    Withdraw(amount:number){
         let form = new FormData();
         form.append('amount', amount.toString());
         return this.http
-        .post(address + "/api/Transaction/Withdraw", form , {
+        .post(TransactionServis.Address  + "/api/Transaction/Withdraw", form , {
             headers:{
-                Authorization:"Bearer " + key
+                Authorization:"Bearer " + TransactionServis.Token 
             }
         });
     }
 
-    Transfer(address:string, key:string, amount:number, UserReceiverName:string){
+    Transfer(amount:number, UserReceiverName:string){
         let form = new FormData();
         form.append('amount', amount.toString());
         form.append('UserReceiverName', UserReceiverName);
         return this.http
-        .post(address + "/api/Transaction/Transfer", form , {
+        .post(TransactionServis.Address  + "/api/Transaction/Transfer", form , {
             headers:{
-                Authorization:"Bearer " + key
+                Authorization:"Bearer " + TransactionServis.Token 
             }
         });
     }

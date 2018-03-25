@@ -74,7 +74,7 @@ namespace DA.Business.Servises
                     returnModel.Error = true;
                     return returnModel;
                 }
-                returnMdel.Error = false;
+                returnModel.Error = false;
                 returnModel.Item = userView;
                 return returnModel;
             }

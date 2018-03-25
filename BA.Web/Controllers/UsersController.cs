@@ -37,7 +37,7 @@ namespace BA.Web.Controllers
         public IActionResult Post([FromBody]UserModel user)
         {
             var model = _userServises.Register(user);
-            if (model.Error)
+            if (!model.Error)
                 return Ok(model.Error);
 
             return BadRequest(model.ErrorMessage);

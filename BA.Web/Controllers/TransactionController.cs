@@ -21,21 +21,20 @@ namespace BA.Web.Controllers
         {
             var result = _transactionServises.Deposit(User.Identity.Name, amount);
             if (!result.Error)
-                return Ok(result.ErrorMessage);
+                return Ok(!result.Error);
 
-            return BadRequest(!result.Error);
+            return BadRequest(result.ErrorMessage);
         }
 
         [Authorize]
         [Route("Withdraw")]
         public IActionResult Withdraw(double amount)
         {
-            string error = string.Empty;
             var result = _transactionServises.Withdraw(User.Identity.Name, amount);
             if (!result.Error)
-                return Ok(result.ErrorMessage);
+                return Ok(!result.Error);
 
-            return BadRequest(!result.Error);
+            return BadRequest(result.ErrorMessage);
         }
 
         [Authorize]
@@ -44,9 +43,9 @@ namespace BA.Web.Controllers
         {
             var result = _transactionServises.Transfer(amount, User.Identity.Name, userReceiverName);
             if (!result.Error)
-                return Ok(result.ErrorMessage);
+                return Ok(!result.Error);
 
-            return BadRequest(!result.Error);
+            return BadRequest(result.ErrorMessage);
         }
     }
 }

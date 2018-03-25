@@ -1,6 +1,19 @@
 .user-info{
     cursor: pointer;
     text-align: right;
-    color: rgba(255,255,255,.5);
+    color: white;
+}
+
+.navbar-toggler{
+    float: right !important;
+    text-align: right !important;
+}
+
+.navbar-nav{
+    width: 100%;
+}
+
+input.ng-touched.ng-invalid {
+    border:solid red 2px;
 }
 

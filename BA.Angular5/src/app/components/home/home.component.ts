@@ -38,35 +38,20 @@ export class HomeComponent implements OnInit{
     }
 
     ngOnInit(){
-        this.GetKey();
-        this.GetApiAddress();
         this.GetCurrentUser();
         this.GetTransactions();
     }
 
     GetTransactions(){
-        this._transactionServis.GetList(this.ApiAddress,this.Key).subscribe(list =>{
+        this._transactionServis.GetList().subscribe(list =>{
             this.TransactionList = list;
         });
     }
 
-    GetKey(){
-        var keyValue = "";
-        this._dataServis.GetKeyValue().subscribe(key => {
-            this.Key = key;
-        });
-    }
-
     GetCurrentUser() {
-        this._userservis.getCurrentUser(this.ApiAddress, this.Key).subscribe( (user:any) => {
+        this._userservis.getCurrentUser().subscribe( (user:any) => {
             this.User = user;
             console.log(user);
-        });
-    }
-
-    GetApiAddress() {
-         this._dataServis.GetApiAddressValue().subscribe(address => {
-            this.ApiAddress =  address;
         });
     }
 
@@ -75,11 +60,5 @@ export class HomeComponent implements OnInit{
             return true;
         
         return false;
-      } 
-      
-      public Logout(){
-        this._dataServis.SetKey('');
-        this._dataServis.SetUserInfo(null);
-        this._router.navigate(['login']);
-      }
+      }  
 }

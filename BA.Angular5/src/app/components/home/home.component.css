@@ -35,7 +35,14 @@
     border-left:3px solid red;
 }
 
-.block-right{
+.user-info{
     float:right;
-    text-align: right;
+}
+.trType,{
+    font-size:18px;
+}
+
+.trType,
+.amountTransaction{
+    font-weight: 600;
 }

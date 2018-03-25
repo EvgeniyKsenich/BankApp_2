@@ -1,10 +1,4 @@
 <div id="transactionFrame" class="frame">
-    <div *ngIf="ifLoginIn()" class="block-right">
-        <div class="user-info">
-            <a class=" btn btn-danger" (click)="Logout()">Logout</a>
-        </div>
-        <span>{{User.userName}}</span>
-    </div>
     <h3 class="head">Transactions</h3>
     <h3 *ngIf="ifLoginIn()">Balance: {{User.balance}}</h3>
     <hr />
@@ -13,19 +7,19 @@
         <div *ngIf="item.type == 1" class="transaction deposit">
             <div class="transaction-item">
                 <span class="trType">Deposit</span>
-                <p>Summa : {{item.summa}} | Date: {{ item.date | date:'dd/MM/yyyy hh:mm:ss a'  }}</p>
+                <p><span class="amountTransaction">Amount : {{item.summa}}</span> | Date: {{ item.date | date:'dd/MM/yyyy hh:mm:ss a'  }}</p>
             </div>
         </div>
         <div *ngIf="item.type == 2" class="transaction withdraw">
             <div class="transaction-item">
                 <span class="trType">Withdraw</span>
-                <p>Summa : {{item.summa}} | Date: {{item.date | date:'dd/MM/yyyy hh:mm:ss a'  }}</p>
+                <p><span class="amountTransaction">Amount : {{item.summa}}</span> | Date: {{item.date | date:'dd/MM/yyyy hh:mm:ss a'  }}</p>
             </div>
         </div>
         <div *ngIf="item.type == 3" class="transaction transfer {{item.accountInfoInitiator==User.userName?'withdraw':'deposit'}}">
             <div class="transaction-item">
                 <span class="trType">Transfer</span>
-                <p>Summa : {{item.summa}} | Date: {{item.date | date:'dd/MM/yyyy hh:mm:ss a'  }}</p>
+                <p><span class="amountTransaction">Amount : {{item.summa}}</span> | Date: {{item.date | date:'dd/MM/yyyy hh:mm:ss a'  }}</p>
                 <p>From: {{item.accountInfoInitiator}}</p>
                 <p>To: {{item.accountInfoRecipient}}</p>
             </div>

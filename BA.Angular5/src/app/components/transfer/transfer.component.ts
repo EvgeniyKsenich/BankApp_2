@@ -16,13 +16,11 @@ export class TransferComponent {
     private _dataServis: DataServis;
     private _router:Router ;
 
-    public Key: string;
-    public ApiAddress: string;
     public AmountPayment:number;
     public selectedValueforTransfer:any;
     public UserTransferList:Array<UserInfo> = new Array<UserInfo>();
-    public errorMessage: string = "";
     public User;
+    public ErrorMessage: string = "";
 
     constructor(dataServis: DataServis, router: Router,transactionServis:TransactionServis,userServises:UserServises) {
         this._dataServis = dataServis;
@@ -32,53 +30,37 @@ export class TransferComponent {
     }
 
     ngOnInit() {
-        this.GetKey();
-        this.GetApiAddress();
         this.GetCurrentUser();
         this.GetUsersForTransfer();
     }
 
     public Transfer(){
         if(this.selectedValueforTransfer == undefined){
-            this.errorMessage = "Select user to transfer";
             return -1;
         }
 
         this._transactionServis.Transfer
-        (this.ApiAddress,this.Key, this.AmountPayment, this.selectedValueforTransfer.userName).subscribe(
+        (this.AmountPayment, this.selectedValueforTransfer.userName).subscribe(
             data=>{
+                this.ErrorMessage = "";
                 this._router.navigate(['home']);
-                console.log(data);
             },
-            error =>{
-                this.errorMessage = error.error;
+            error => {
+                this.ErrorMessage = error.error;
             }
         );
     }
 
     GetCurrentUser() {
-        this._userServis.getCurrentUser(this.ApiAddress, this.Key).subscribe( (user:any) => {
+        this._userServis.getCurrentUser().subscribe( (user:any) => {
             this.User = user;
-            console.log(user);
         });
     }
 
     GetUsersForTransfer(){
-        this._userServis.GetUsersFoTransaction(this.ApiAddress, this.Key).subscribe((data:Array<UserInfo>) => {
+        this._userServis.GetUsersForTransaction().subscribe((data:Array<UserInfo>) => {
             this.UserTransferList = data;
           });
-    }
-
-    GetKey() {
-        this._dataServis.GetKeyValue().subscribe(Key => {
-            this.Key = Key;
-        });
-    }
-
-    GetApiAddress() {
-        this._dataServis.GetApiAddressValue().subscribe(address => {
-            this.ApiAddress = address;
-        });
     }
 
     public isLoaded():boolean{
@@ -89,10 +71,10 @@ export class TransferComponent {
         return true;
       }
 
-      isError():boolean{
-        if(this.errorMessage == "")
-            return false;
+      public isError(){
+        if(this.ErrorMessage != "")
+            return true;
 
-        return true;
+        return false;
     }
 }

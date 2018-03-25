@@ -5,8 +5,8 @@ import { UserIdenity } from '../models/models.user.identity';
 
 @Injectable()
 export class DataServis {
-    private _Key:string = "";
-    private Key = new BehaviorSubject<string>("");
+    private _Token:string = "";
+    private Token = new BehaviorSubject<string>("");
 
     private _ApiAddress:string = "";
     private ApiAddress = new BehaviorSubject<string>("");
@@ -16,9 +16,9 @@ export class DataServis {
 
     constructor() { }
 
-    public GetKeyValue(){
-        this.Key.next(this._Key);
-        return this.Key.asObservable();
+    public GetTokenValue(){
+        this.Token.next(this._Token);
+        return this.Token.asObservable();
     }
 
     public GetApiAddressValue(){
@@ -39,13 +39,13 @@ export class DataServis {
         this._ApiAddress = address;
     }
 
-    public SetKey(key:string) {
-        this._Key = key;
+    public SetToken(key:string) {
+        this._Token = key;
     }
 
     public isLiginIn():boolean
     {
-         if(this._Key)
+         if(this._Token)
              return true;
 
         return false;
