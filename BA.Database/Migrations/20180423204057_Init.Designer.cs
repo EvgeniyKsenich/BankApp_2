@@ -11,8 +11,8 @@ using System;
 namespace BA.Database.Migrations
 {
     [DbContext(typeof(DataContext.DataContext))]
-    [Migration("20180311164044_Initial")]
-    partial class Initial
+    [Migration("20180423204057_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,7 +26,8 @@ namespace BA.Database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<double>("Balance");
+                    b.Property<double>("Balance")
+                        .IsConcurrencyToken();
 
                     b.Property<int>("UserId");
 

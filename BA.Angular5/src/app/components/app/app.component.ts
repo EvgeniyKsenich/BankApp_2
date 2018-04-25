@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(){
-    this._dataServis.SetApiAddress("http://localhost:62733");
+    this._dataServis.SetApiAddress("http://localhost:51469");
   }
 
   public ifLoginIn():boolean{

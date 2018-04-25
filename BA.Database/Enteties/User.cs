@@ -30,7 +30,7 @@ namespace BA.Database.Enteties
         public string Email { get; set; }
 
         [Required]
-        [MaxLength(60)]
+        [MaxLength(128)]
         public string Password { get; set; }
 
         [Required]

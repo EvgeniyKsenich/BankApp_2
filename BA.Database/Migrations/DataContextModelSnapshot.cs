@@ -25,7 +25,8 @@ namespace BA.Database.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<double>("Balance");
+                    b.Property<double>("Balance")
+                        .IsConcurrencyToken();
 
                     b.Property<int>("UserId");
 
