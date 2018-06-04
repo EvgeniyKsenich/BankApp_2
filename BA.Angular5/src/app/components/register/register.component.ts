@@ -9,6 +9,7 @@ import { IdentitiServises } from '../../servises/identity.servis';
 @Component({
     selector: 'counter',
     templateUrl: './register.component.html',
+    styleUrls: ['./register.component.css'],
     providers:[IdentitiServises]
 })
 export class RegisterComponent implements OnInit{

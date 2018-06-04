@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BA.Database.Enteties
 {
-    public class Transaction : IPrototype
+    public class Transaction 
     {
         public int Id { get; set; }
 
