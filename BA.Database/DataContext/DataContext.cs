@@ -9,6 +9,18 @@ namespace BA.Database.DataContext
 {
     public class DataContext:DbContext
     {
+        private static DataContext _instance;
+
+        private DataContext()
+        { }
+
+        public static DataContext getInstance()
+        {
+            if (_instance == null)
+                _instance = new DataContext();
+            return _instance;
+        }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
@@ -20,24 +32,7 @@ namespace BA.Database.DataContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<User>()
-            //    .HasMany(p => p.Accounts)
-            //    .WithOne(k => k.User)
-            //    .HasForeignKey(e => e.UserId);
 
-            //modelBuilder.Entity<Account>()
-            //    .HasMany(p => p.Initiator)
-            //    .WithOne(b => b.AccountInitiator)
-            //    .HasForeignKey(e => e.AccountInitiatorId)
-            //    .HasConstraintName("FK_Initiator")
-            //    .OnDelete(DeleteBehavior.Restrict);
-
-            //modelBuilder.Entity<Account>()
-            //    .HasMany(p => p.Recipient)
-            //    .WithOne(b => b.AccountRecipient)
-            //    .HasForeignKey(e => e.AccountRecipientId)
-            //    .HasConstraintName("FK_Recipient")
-            //    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
